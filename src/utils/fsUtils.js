@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
+const crypto = require('crypto');
 
 const jsonPath = '../talker.json';
 
@@ -26,7 +27,13 @@ async function getTalkerById(id) {
   }
 }
 
+function tokenGenerator() {
+  const token = crypto.randomBytes(8).toString('hex');
+  return token;
+}
+
 module.exports = {
   getTalkers,
   getTalkerById,
+  tokenGenerator,
 };
