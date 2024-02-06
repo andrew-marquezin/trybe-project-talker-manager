@@ -1,11 +1,18 @@
 const express = require('express');
-const { getTalkers, getTalkerById, tokenGenerator } = require('./utils/fsUtils');
+const { getTalkers, getTalkerById, tokenGenerator, registerNewTalker } = require('./utils/fsUtils');
 const {
   emailCheck,
   passwordCheck,
   validateEmail,
   validatePassword,
-} = require('./middlewares/loginAuth');
+} = require('./middlewares/loginMiddleware');
+const { tokenAuth,
+  nameCheck,
+  ageCheck,
+  talkCheck,
+  watchedCheck,
+  rateCheck,
+} = require('./middlewares/talkerMiddleware');
 
 const app = express();
 app.use(express.json());
@@ -39,6 +46,22 @@ app.post('/login', emailCheck, passwordCheck, validateEmail, validatePassword, (
   const token = tokenGenerator();
   res.status(HTTP_OK_STATUS).json({ token });
 });
+
+app.post('/talker',
+  tokenAuth,
+  nameCheck,
+  ageCheck,
+  talkCheck,
+  watchedCheck,
+  rateCheck,
+  async (req, res) => {
+    try {
+      const talker = await registerNewTalker(req.body);
+      res.status(201).json(talker);
+    } catch (err) {
+      console.log(err.message);
+    }
+  });
 
 app.listen(PORT, () => {
   console.log('Online');

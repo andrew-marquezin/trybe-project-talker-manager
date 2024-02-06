@@ -32,8 +32,30 @@ function tokenGenerator() {
   return token;
 }
 
+async function registerNewTalker(req) {
+  try {
+    const data = await getTalkers();
+    const { name, age, talk } = req;
+    const { watchedAt, rate } = talk;
+    const talker = { id: data.length + 1,
+      name,
+      age,
+      talk: {
+        watchedAt,
+        rate,
+      } };
+    const newData = JSON.stringify([...data, talker]);
+    await fs.writeFile(path.resolve(__dirname, jsonPath), newData);
+    console.log(talker);
+    return talker;
+  } catch (err) {
+    return (`Erro ao registrar palestrante: ${err.message}`);
+  }
+}
+
 module.exports = {
   getTalkers,
   getTalkerById,
   tokenGenerator,
+  registerNewTalker,
 };
