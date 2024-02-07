@@ -16,12 +16,12 @@ async function getTalkers() {
 
 async function getTalkerById(id) {
   try {
-    const file = await fs.readFile(path.resolve(__dirname, jsonPath), 'utf-8');
-    const data = JSON.parse(file);
-    if (data) {
-      const talker = data.find((t) => t.id === Number(id));
-      return talker;
+    const data = await getTalkers();
+    const talker = data.find((t) => t.id === Number(id));
+    if (!talker) {
+      return undefined;
     }
+    return talker;
   } catch (err) {
     console.log(`Erro ao resgatar o palestrante solicitado ${err.message}`);
   }
@@ -46,10 +46,28 @@ async function registerNewTalker(req) {
       } };
     const newData = JSON.stringify([...data, talker]);
     await fs.writeFile(path.resolve(__dirname, jsonPath), newData);
-    console.log(talker);
     return talker;
   } catch (err) {
     return (`Erro ao registrar palestrante: ${err.message}`);
+  }
+}
+
+async function updateTalker(id, req) {
+  try {
+    const data = await getTalkers();
+    const filteredData = data.filter((t) => (t.id !== id));
+    const { name, age, talk } = req;
+    const { watchedAt, rate } = talk;
+    const talker = {
+      id,
+      name,
+      age,
+      talk: { watchedAt, rate } };
+    const newData = JSON.stringify([...filteredData, talker]);
+    await fs.writeFile(path.resolve(__dirname, jsonPath), newData);
+    return talker;
+  } catch (err) {
+    console.log(`Erro ao atualizar pessoa palestrante ${err.message}`);
   }
 }
 
@@ -58,4 +76,5 @@ module.exports = {
   getTalkerById,
   tokenGenerator,
   registerNewTalker,
+  updateTalker,
 };

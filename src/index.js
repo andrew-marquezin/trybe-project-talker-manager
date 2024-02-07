@@ -1,5 +1,11 @@
 const express = require('express');
-const { getTalkers, getTalkerById, tokenGenerator, registerNewTalker } = require('./utils/fsUtils');
+const {
+  getTalkers,
+  getTalkerById,
+  tokenGenerator,
+  registerNewTalker,
+  updateTalker,
+} = require('./utils/fsUtils');
 const {
   emailCheck,
   passwordCheck,
@@ -12,6 +18,7 @@ const { tokenAuth,
   talkCheck,
   watchedCheck,
   rateCheck,
+  validIdCheck,
 } = require('./middlewares/talkerMiddleware');
 
 const app = express();
@@ -58,6 +65,23 @@ app.post('/talker',
     try {
       const talker = await registerNewTalker(req.body);
       res.status(201).json(talker);
+    } catch (err) {
+      console.log(err.message);
+    }
+  });
+
+app.put('/talker/:id',
+  tokenAuth,
+  nameCheck,
+  ageCheck,
+  talkCheck,
+  watchedCheck,
+  rateCheck,
+  validIdCheck,
+  async (req, res) => {
+    try {
+      const talker = await updateTalker(Number(req.params.id), req.body);
+      res.status(HTTP_OK_STATUS).send(talker);
     } catch (err) {
       console.log(err.message);
     }

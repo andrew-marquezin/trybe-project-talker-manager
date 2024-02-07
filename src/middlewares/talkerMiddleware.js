@@ -1,3 +1,5 @@
+const { getTalkerById } = require('../utils/fsUtils');
+
 const tokenAuth = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization) {
@@ -90,6 +92,19 @@ const rateCheck = (req, res, next) => {
   next();
 };
 
+const validIdCheck = async (req, res, next) => {
+  const { id } = req.params;
+  const talker = await getTalkerById(id);
+  if (!talker) {
+    // console.log('chegou no 404');
+    res.status(404).send({
+      message: 'Pessoa palestrante não encontrada',
+    });
+  }
+  // console.log(talker);
+  next();
+};
+
 module.exports = {
   tokenAuth,
   nameCheck,
@@ -97,4 +112,5 @@ module.exports = {
   talkCheck,
   watchedCheck,
   rateCheck,
+  validIdCheck,
 };
