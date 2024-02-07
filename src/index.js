@@ -5,6 +5,7 @@ const {
   tokenGenerator,
   registerNewTalker,
   updateTalker,
+  deleteTalker,
 } = require('./utils/fsUtils');
 const {
   emailCheck,
@@ -86,6 +87,15 @@ app.put('/talker/:id',
       console.log(err.message);
     }
   });
+
+app.delete('/talker/:id', tokenAuth, async (req, res) => {
+  try {
+    await deleteTalker(Number(req.params.id));
+    res.status(204).send();
+  } catch (err) {
+    console.log(err.message);
+  }
+});
 
 app.listen(PORT, () => {
   console.log('Online');

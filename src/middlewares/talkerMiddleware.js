@@ -96,12 +96,10 @@ const validIdCheck = async (req, res, next) => {
   const { id } = req.params;
   const talker = await getTalkerById(id);
   if (!talker) {
-    // console.log('chegou no 404');
     res.status(404).send({
       message: 'Pessoa palestrante não encontrada',
     });
   }
-  // console.log(talker);
   next();
 };
 

@@ -71,10 +71,22 @@ async function updateTalker(id, req) {
   }
 }
 
+async function deleteTalker(id) {
+  try {
+    const data = await getTalkers();
+    const filteredData = data.filter((t) => (t.id !== id));
+    const newData = JSON.stringify(filteredData);
+    await fs.writeFile(path.resolve(__dirname, jsonPath), newData);
+  } catch (err) {
+    console.log(`Erro ao deletar palestrante : ${err.message}`);
+  }
+}
+
 module.exports = {
   getTalkers,
   getTalkerById,
   tokenGenerator,
   registerNewTalker,
   updateTalker,
+  deleteTalker,
 };
